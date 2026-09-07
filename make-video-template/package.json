@@ -1,0 +1,42 @@
+{
+  "name": "amc-video",
+  "version": "1.0.0",
+  "description": "AMC数学竞赛介绍视频 - Remotion + 阿里百炼TTS",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts AMCVideo out/amc-video.mp4",
+    "generate-voiceover": "npx ts-node generate-voiceover.ts",
+    "build": "remotion render src/index.ts AMCVideo out/amc-video.mp4 --codec h264",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@remotion/cli": "^4.0.446",
+    "@remotion/google-fonts": "^4.0.454",
+    "@remotion/media": "^4.0.446",
+    "@remotion/transitions": "^4.0.446",
+    "@types/node": "^25.5.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@types/ws": "^8.18.1",
+    "music-metadata": "^11.12.3",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "remotion": "^4.0.446",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.2",
+    "uuid": "^13.0.0",
+    "ws": "^8.20.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/jsdom": "^28.0.1",
+    "jsdom": "^29.1.0",
+    "vitest": "^4.1.5"
+  }
+}
