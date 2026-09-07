@@ -4,8 +4,9 @@
 # 用法:
 #   bash render_and_mux.sh <CompositionId> <输出名> [BGM路径] [工程目录]
 # 示例:
-#   bash render_and_mux.sh Template2Video 输出名
-#   bash render_and_mux.sh Template3Video 输出名 /tmp/我的BGM.m4a
+#   bash render_and_mux.sh Template1Video 输出名           # 模板1
+#   bash render_and_mux.sh Template5Video 输出名           # 模板5（需图片素材）
+#   bash render_and_mux.sh TemplateNVideo 输出名 /tmp/我的BGM.m4a   # 自定义 BGM
 #
 # 输出:
 #   <工程目录>/out/<输出名>-final.mp4   (已带 BGM 的最终成片)
@@ -15,7 +16,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILL_BGM="$SCRIPT_DIR/../assets/bgm.m4a"
 
-COMP_ID="${1:?缺少 CompositionId，例如 Template2Video}"
+COMP_ID="${1:?缺少 CompositionId，例如 Template1Video / Template2Video / Template5Video}"
 OUT_NAME="${2:?缺少输出名，例如 补贴清单}"
 BGM="${3:-}"
 PROJ_DIR="${4:-$(pwd)}"
@@ -35,6 +36,11 @@ if [[ -z "$BGM" ]]; then
     echo "==> 未指定 BGM，使用 skill 内置默认: $BGM"
   fi
 fi
+
+# WorkBuddy brokered-fs 兼容：把 webpack bundle 临时目录重定向到工程内 .cache，
+# 避开 `/var/folders/.../T/remotion-webpack-bundle-xxxxxx` 的 mkdir EEXIST 拦截。
+mkdir -p "$PROJ_DIR/.cache"
+export TMPDIR="$PROJ_DIR/.cache"
 
 cd "$PROJ_DIR"
 

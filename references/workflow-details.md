@@ -13,6 +13,7 @@
 │   │   ├── Template2InfoCard.tsx    # ★ 模板2 星空黄卡键值清单版（已封版，勿改）
 │   │   ├── Template3InfoCard.tsx    # ★ 模板3 星空卡片政策条列版（已封版，勿改）
 │   │   ├── Template4InfoCard.tsx    # ★ 模板4 红色放射补贴强调版（已封版，勿改）
+│   │   ├── Template5Evidence.tsx    # ★ 模板5 证据型回单说服版（已封版，勿改；需图片素材）
 │   │   └── registry.ts              # ★ 模板库注册表
 │   ├── Root.tsx                     # ★ Composition 注册（模板1~4 及对应 Still）
 │   ├── config.ts                    # FPS/WIDTH/HEIGHT 常量
@@ -21,7 +22,7 @@
 └── out/                             # 渲染产物
 ```
 
-> 注意：工程中只有模板1~4 这 4 个短视频 Composition（9~12 秒）。
+> 工程含模板 1~5 共 5 个短视频 Composition（9~12 秒，模板5 为 7.9s）。模板 1~4 由 `TemplateData` 驱动，模板 5 由 `Template5Data` 驱动（**模板5 必须配图片素材**才能出片）。
 > 任何渲染命令都只会渲出短视频；如果渲出了几分钟的长视频，说明用错工程了。
 
 ## 完整出片流程
@@ -86,11 +87,15 @@ npx remotion still src/index.ts MyVideo out/my-f0.png --frame=0
 推荐用脚本（见 `scripts/render_and_mux.sh`）：
 
 ```bash
-# 不传 BGM → 按 CompositionId 自动匹配 public/bgm/templateN.m4a
-bash <skill>/scripts/render_and_mux.sh Template2Video 我的视频
+# 不传 BGM → 按 CompositionId 自动匹配 public/bgm/templateN.m4a（N 取 CompositionId 里的数字 1~5）
+bash <skill>/scripts/render_and_mux.sh Template1Video 我的视频       # 模板1
+bash <skill>/scripts/render_and_mux.sh Template2Video 我的视频       # 模板2
+bash <skill>/scripts/render_and_mux.sh Template3Video 我的视频       # 模板3
+bash <skill>/scripts/render_and_mux.sh Template4Video 我的视频       # 模板4
+bash <skill>/scripts/render_and_mux.sh Template5Video 我的视频       # 模板5（需图片素材）
 
 # 用户提供了新 BGM 时显式传入
-bash <skill>/scripts/render_and_mux.sh Template2Video 我的视频 /tmp/bgm.m4a
+bash <skill>/scripts/render_and_mux.sh TemplateNVideo 我的视频 /tmp/bgm.m4a
 ```
 
 或手动两步：
@@ -123,6 +128,7 @@ open ~/Desktop/我的视频-新版.mp4
   - 模板2：~9.97s → `299`
   - 模板3：~9.13s → `274`
   - 模板4：~11.73s → `352`
+  - 模板5：~7.90s → `237`（模板5 总长已对齐 237 帧，与 template5.m4a 长度匹配）
 - 用户换新 BGM 时，先用 `ffprobe -show_entries format=duration` 量时长，再按新秒数设置
 - 视频总长必须 ≥ BGM 长（否则 BGM 被截断）
 - 改时长时：只改 Root.tsx 中该 Composition 的 `durationInFrames`，
@@ -166,7 +172,7 @@ open ~/Desktop/我的视频-新版.mp4
 
 3. **注册新模板**
    - 在 `src/templates/registry.ts` 追加到 `TEMPLATES` 数组
-   - 在 `src/Root.tsx` 注册 `Composition` + `Still`（id 建议 `Template2Video` / `Template2Cover`）
+   - 在 `src/Root.tsx` 注册 `Composition` + `Still`（id 建议 `Template{N}Video` / `Template{N}Cover`，N 是 1~5 模板号；模板 5 用 `Template5Evidence` 组件 + `Template5Data` 数据）
 
 4. **样片确认**
    - 用该模板渲染一段带用户真实文案的视频（或空白模板预览）

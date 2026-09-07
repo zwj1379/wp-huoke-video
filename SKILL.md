@@ -67,7 +67,7 @@ tags:
 - 模板工程通常固定在某一个历史 workspace 的 `make-video-template/` 目录下（`meimouren/make-video-template` 克隆 + 已添加 `src/templates/Template1InfoCard.tsx` / `src/templates/registry.ts` / `src/templateData.ts`）。若当前 `<workspace>/make-video-template/` 不存在，先用 `find /Users/a123/WorkBuddy -maxdepth 3 -name make-video-template -type d` 定位，再进入该目录执行渲染。
 - Node 18+、npm 依赖已安装（`npm install` 已跑过）
 - FFmpeg 可用
-- **内置默认 BGM**：工程 `public/bgm/` 目录下按模板ID存放（`template1.m4a`~`template4.m4a`；模板5 沿用 template4，脚本已自动映射）。用户未提供 BGM 时，按所选模板自动使用对应默认 BGM；用户提供了新 BGM 时优先用用户的
+- **内置默认 BGM**：工程 `public/bgm/` 目录下按模板ID存放（`template1.m4a` ~ `template5.m4a`，每个模板一首独立 BGM）。用户未提供 BGM 时，按所选模板自动使用对应默认 BGM（脚本会从 CompositionId 提取模板号 → 找对应 `templateN.m4a`）；用户提供了新 BGM 时优先用用户的
 
 ## 工作流总览
 
@@ -156,10 +156,12 @@ npx remotion still src/index.ts MyVideo out/my-f0.png --frame=0
 
 ```bash
 # 一键（推荐）· 不传 BGM 参数时按 CompositionId 自动匹配 public/bgm/templateN.m4a
-bash ~/.workbuddy/skills/wp-huoke-video/scripts/render_and_mux.sh Template2Video 输出名
+bash ~/.workbuddy/skills/wp-huoke-video/scripts/render_and_mux.sh TemplateNVideo 输出名
+# N 取 CompositionId 里的数字 1~5：Template1Video / Template2Video / Template3Video / Template4Video / Template5Video
+# 脚本会自动从 CompositionId 提取模板号并匹配对应 BGM
 
 # 用户提供了新 BGM 时显式传入（此时视频时长按新 BGM 对齐）
-bash ~/.workbuddy/skills/wp-huoke-video/scripts/render_and_mux.sh Template2Video 输出名 /path/to/新BGM.m4a
+bash ~/.workbuddy/skills/wp-huoke-video/scripts/render_and_mux.sh TemplateNVideo 输出名 /path/to/新BGM.m4a
 ```
 
 > ⚠️ **必须用上面的脚本，不要手动 ffmpeg 合成**。remotion 渲出的 mp4 自带一条静音音轨，ffmpeg 不加 `-map 0:v:0 -map 1:a:0` 时会默认选中这条静音轨，导致成片"没有音乐"。若确需手动合成，务必带上这两个 `-map` 参数。
