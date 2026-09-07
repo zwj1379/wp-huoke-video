@@ -64,7 +64,7 @@ tags:
 
 ## 依赖
 
-- 模板工程通常固定在某一个历史 workspace 的 `make-video-template/` 目录下（`meimouren/make-video-template` 克隆 + 已添加 `src/templates/Template1InfoCard.tsx` / `src/templates/registry.ts` / `src/templateData.ts`）。若当前 `<workspace>/make-video-template/` 不存在，先用 `find /Users/a123/WorkBuddy -maxdepth 3 -name make-video-template -type d` 定位，再进入该目录执行渲染。
+- 模板工程 `make-video-template/` 需自行准备：应含 `src/templates/Template1InfoCard.tsx` ~ `Template5Evidence.tsx` + `src/templates/registry.ts` + `src/templateData.ts`（本技能仓库**不含**模板工程代码，只含使用说明与脚本；模板工程代码请按你的代码托管习惯放到可达位置，例如自行 clone 或在历史 workspace 中维护）。若当前 `<workspace>/make-video-template/` 不存在，先用 `find /Users/a123/WorkBuddy -maxdepth 3 -name make-video-template -type d` 定位，再进入该目录执行渲染。
 - Node 18+、npm 依赖已安装（`npm install` 已跑过）
 - FFmpeg 可用
 - **内置默认 BGM**：工程 `public/bgm/` 目录下按模板ID存放（`template1.m4a` ~ `template5.m4a`，每个模板一首独立 BGM）。用户未提供 BGM 时，按所选模板自动使用对应默认 BGM（脚本会从 CompositionId 提取模板号 → 找对应 `templateN.m4a`）；用户提供了新 BGM 时优先用用户的
@@ -211,6 +211,7 @@ open ~/Desktop/输出名-新版.mp4
 - 模板4 的 InfoCard 忽略 `value` 字段，金额要写进 `name` 文本里；模板4 不渲染 subtitle
 - **模板5（证据型）**：触发判据＝**本次请求有没有上传图片**——有图即用模板5（任意图片，不审内容，`evidenceImage`/`evidenceImages` 字段塞入证据区等比 contain），无图即拦截建议模板1-4；图片数量**保底 1 张、最多 4 张**，1 张静态展示、2~4 张平均分配时长轮换（237/n 帧）；金额/摘要能读出就逐字抄录、读不出留空不虚构；攻略 ≤3 条单行短句；BGM 用模板5 专属 `template5.m4a`（抽自对标参考视频，总长 237 帧/7.9s），副标题动画为扫光非浮动，多图切换为卷角动画
 - 扫光保持**窄带**（40%→50%→60%），描边/厚度随字号缩放（历史踩坑，见 workflow-details.md）
+- **WorkBuddy brokered-fs 兼容**（2026-09-07 踩坑）：在 WorkBuddy 沙箱里 `npx remotion still/render` 会撞上 `EEXIST: file already exists, mkdir '/var/folders/.../T/remotion-webpack-bundle-xxxxxx'`，因为 `node-brokered-fs-shim` 拒绝在系统 tmp 目录 mkdir。**`render_and_mux.sh` 已自动 `export TMPDIR="$PROJ_DIR/.cache"` 规避**；但跑首帧 `npx remotion still` 时也要带 `TMPDIR="$PWD/.cache" mkdir -p .cache && TMPDIR="$PWD/.cache" npx remotion still ...`，否则会卡在 bundling 100% 后 EEXIST 失败
 - 分组 2~5 最稳；超过 5 组卡片过扁，需合并
 - BGM 时长决定 `durationInFrames`（秒数 × 30fps）
 - 每次只新增 Composition 与新模板，保留既有模板与历史实例
